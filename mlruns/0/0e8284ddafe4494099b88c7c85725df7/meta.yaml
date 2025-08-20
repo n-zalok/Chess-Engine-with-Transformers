@@ -1,0 +1,14 @@
+artifact_uri: file:///home/noor-zalouk/ME/NLP/Chess/Chess-Engine-with-Transformers/mlruns/0/0e8284ddafe4494099b88c7c85725df7/artifacts
+end_time: 1755659280087
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 0e8284ddafe4494099b88c7c85725df7
+run_name: mercurial-hen-697
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1755608980735
+status: 3
+tags: []
+user_id: noor-zalouk
