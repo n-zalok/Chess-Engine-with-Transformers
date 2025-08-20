@@ -1,0 +1,23 @@
+artifact_path: file:///home/noor-zalouk/ME/NLP/Chess/Chess-Engine-with-Transformers/mlruns/0/models/m-869922ff683249fbb491ad1fc17ac3d2/artifacts
+flavors:
+  python_function:
+    config:
+      device: null
+    data: data
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.pytorch
+    pickle_module_name: mlflow.pytorch.pickle_module
+    python_version: 3.13.5
+  pytorch:
+    code: null
+    model_data: data
+    pytorch_version: 2.7.1+cu126
+mlflow_version: 3.0.0
+model_id: m-869922ff683249fbb491ad1fc17ac3d2
+model_size_bytes: 3349199
+model_uuid: m-869922ff683249fbb491ad1fc17ac3d2
+prompts: null
+run_id: 0e8284ddafe4494099b88c7c85725df7
+utc_time_created: '2025-08-20 02:10:28.640596'

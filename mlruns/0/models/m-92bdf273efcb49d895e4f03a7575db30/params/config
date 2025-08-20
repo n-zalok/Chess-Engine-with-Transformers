@@ -1,0 +1,1 @@
+{'num_hidden_layers': 4, 'num_attention_heads': 4, 'max_position_embeddings': 68, 'vocab_size': 20, 'hidden_size': 128, 'intermediate_size': 512, 'embedd_dropout': 0.1, 'head_dropout': 0.1, 'multi_dropout': 0.1, 'FF_dropout': 0.1, 'classifier_dropout': 0.2}
