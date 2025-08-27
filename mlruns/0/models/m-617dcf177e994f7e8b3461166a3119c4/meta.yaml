@@ -1,0 +1,10 @@
+artifact_location: file:///home/noor-zalouk/ME/NLP/Chess/Chess-Engine-with-Transformers/mlruns/0/models/m-617dcf177e994f7e8b3461166a3119c4/artifacts
+creation_timestamp: 1755887037999
+experiment_id: '0'
+last_updated_timestamp: 1755887041790
+model_id: m-617dcf177e994f7e8b3461166a3119c4
+model_type: null
+name: chess-epoch-3
+source_run_id: bc3d39d5a4994e4ca20630c35744f9d9
+status: 2
+status_message: null

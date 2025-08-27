@@ -3,11 +3,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+# define input tokenizer
 tokenizer = {'[CLS]': 0, 'WHITE': 1, 'BLACK': 2, 'KINGSIDE_CASTLE': 3,
              'NO_KINGSIDE_CASTLE': 4, 'QUEENSIDE_CASTLE': 5, 'NO_QUEENSIDE_CASTLE': 6,
              'EMPTY': 7, 'P': 8, 'N': 9, 'B': 10, 'R': 11, 'Q': 12, 'K': 13,
              'p': 14, 'n': 15, 'b': 16, 'r': 17, 'q': 18, 'k': 19}
 
+# define output labels
 labels = [chr(i) + str(j) for i in range(ord('a'), ord('h') + 1) for j in range(1, 9)]
 label_to_id = {label: idx for idx, label in enumerate(labels)}
 id_to_label = {idx: label for label, idx in label_to_id.items()}
@@ -20,6 +22,7 @@ label_to_id['e8c8'] = 65
 id_to_label[64] = 'O-O'
 id_to_label[65] = 'O-O-O'
 
+# model's configuration
 class Config():
     def __init__(self):
         self.num_hidden_layers = 4
@@ -89,6 +92,7 @@ class AttentionHead(nn.Module):
         self.dropout = dropout
 
     def forward(self, hidden_state):
+        # Apply attention
         attn_outputs = scaled_dot_product_attention(
             self.q(hidden_state), self.k(hidden_state),
             self.v(hidden_state), self.dropout)
@@ -105,6 +109,7 @@ class MultiHeadAttention(nn.Module):
         self.dropout = nn.Dropout(config.multi_dropout)
     
     def forward(self, hidden_state):
+        # Apply attention for number of heads
         x = torch.cat([h(hidden_state) for h in self.heads], dim=-1)
         x = self.output_linear(x)
         x = self.dropout(x)
@@ -119,8 +124,11 @@ class FeedForward(nn.Module):
         self.dropout = nn.Dropout(config.FF_dropout)
 
     def forward(self, x):
+        # Linear projection
         x = self.linear_1(x)
+        # Activation
         x = self.gelu(x)
+        # Linear projection
         x = self.linear_2(x)
         x = self.dropout(x)
         return x
@@ -165,6 +173,7 @@ class ChessMoveClassifier(nn.Module):
     def forward(self, input_ids):
         # Encoder output: (batch, seq_len, hidden_dim)
         x = self.encoder(input_ids)
+        # Get the [CLS] token
         pooled = x[:, 0, :]
         pooled = self.dropout(pooled)  # (batch, hidden_dim)
 
