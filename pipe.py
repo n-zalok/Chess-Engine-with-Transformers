@@ -1,14 +1,12 @@
 import torch
 import chess
 import architecture as arch
-import evaluate_board
 
 tokenizer = arch.tokenizer
 label_to_id = arch.label_to_id
 id_to_label = arch.id_to_label
 config = arch.Config()
 max_length = config.max_position_embeddings
-counter = 0
 
 def prepare_input(board):
     pos = '[CLS]'
@@ -83,20 +81,24 @@ def topk_moves(board, output, k=1):
                 if start_idx == end_idx:
                     continue
                 else:
-                    move = chess.Move.from_uci(f"{id_to_label[start_idx]}{id_to_label[end_idx]}")
-                    if move in board.legal_moves:
-                        moves[move] = (start_topk.values[0][i].item() + end_topk.values[0][i].item()) / 2
+                    if board.piece_at(chess.parse_square(id_to_label[start_idx])) is not None:
+                        if board.piece_at(chess.parse_square(id_to_label[start_idx])).piece_type == chess.PAWN and (chess.square_rank(chess.parse_square(id_to_label[end_idx])) in [0, 7]):
+                            move = chess.Move.from_uci(f"{id_to_label[start_idx]}{id_to_label[end_idx]}q")
+                        else:
+                            move = chess.Move.from_uci(f"{id_to_label[start_idx]}{id_to_label[end_idx]}")
+
+                        if move in board.legal_moves:
+                            moves[move] = (start_topk.values[0][i].item() + end_topk.values[0][i].item()) / 2
+                        else:
+                            continue
                     else:
                         continue
     top_moves = sorted(moves.items(), key=lambda x: x[1], reverse=True)[:k]
             
     return top_moves
 
-def search(board, model, device, is_maximizing, depth, alpha, beta, k):
-    global counter
 
-    if depth == 0 or board.is_game_over():
-        return evaluate_board.evaluate(board)
+def choose_move(board, model, device, k=1):
 
     input = prepare_input(board).to(device)
     model.eval()
@@ -104,72 +106,5 @@ def search(board, model, device, is_maximizing, depth, alpha, beta, k):
         output = model(input)
     top_k_moves = topk_moves(board, output, k)
 
-    if is_maximizing: # maximizing player
-        value = -float("inf")
-        for move in top_k_moves:
-            counter += 1
-
-            board.push(move[0])
-            value = max(value, search(board, model, device, False, depth - 1, alpha, beta, k))
-            board.pop()
-
-            alpha = max(alpha, value)
-            if beta <= alpha:  # prune
-                break
-        return value
-
-    else:  # minimizing player
-        value = float("inf")
-        for move in top_k_moves:
-            counter += 1
-            
-            board.push(move[0])
-            value = min(value, search(board, model, device, True, depth - 1, alpha, beta, k))
-            board.pop()
-
-            beta = min(beta, value)
-            if beta <= alpha:  # prune
-                break
-        return value
-
-def choose_move(board, model, device, depth=1, k=1):
-    global counter
-
-    root_player = board.turn
-    best_val = -float("inf") if board.turn == chess.WHITE else float("inf")
-    best_move = None
-
-    input = prepare_input(board).to(device)
-    model.eval()
-    with torch.no_grad():
-        output = model(input)
-    top_k_moves = topk_moves(board, output, k)
-
-    alpha, beta = -float("inf"), float("inf")
-
-    for move in top_k_moves:
-        counter += 1
-
-        board.push(move[0])
-        value = search(board, model, device, board.turn, depth - 1, alpha, beta, k)
-        board.pop()
-
-        if root_player:  # we are white at root
-            if value > best_val:
-                best_val = value
-                best_move = move
-            alpha = max(alpha, best_val)
-        else:  # we are black at root
-            if value < best_val:
-                best_val = value
-                best_move = move
-            beta = min(beta, best_val)
-
-    situations = counter
-    counter = 0
-
-    if best_move is None:
-        best_move = next(iter(board.legal_moves))
-
-    return best_move, best_val, situations
+    return top_k_moves
 
