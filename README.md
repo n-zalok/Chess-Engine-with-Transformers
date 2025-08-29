@@ -72,10 +72,14 @@ more details in train.py and mlruns
 
 run
     
-    pip install -r requirements.txt &&
-    python game.py
+    git clone https://github.com/n-zalok/Chess-Engine-with-Transformers.git &&
+    cd Chess-Engine-with-Transformers &&
+    chmod +x play.sh &&
+    ./play.sh
 
 then choose your side by clicking on the color
+
+The score the model gives to its last move and the time it took to make that move is outputted in red at the top of the screen
 
 The model although it does not play randomly it is still naive and could be beaten easliy by a human
 
