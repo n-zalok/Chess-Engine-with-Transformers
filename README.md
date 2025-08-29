@@ -1,4 +1,6 @@
 # Chess-Engine-with-Transformers
+## Description
+Encoder-only transformer that takes current board as input then outputs next move
 ## Dataset
 [Lichess/tournament-chess-games](https://huggingface.co/datasets/Lichess/tournament-chess-games) on HuggingFace
 
